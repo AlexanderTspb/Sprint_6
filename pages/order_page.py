@@ -1,10 +1,9 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
 from datetime import datetime, timedelta
 from helpers import DateFormatter
+from pages.base_page import BasePage
 
-class OrderPage:
+class OrderPage(BasePage):
 
     order_form_title = [By.XPATH, ".//div[contains(@class,'Order_Header') and contains(text(), 'Для кого самокат')]"]
     order_form_input_first_name = [By.XPATH, ".//input[contains(@placeholder,'Имя')]"]
@@ -26,46 +25,46 @@ class OrderPage:
     order_form_order_succeed = [By.XPATH, ".//div[contains(@class,'Order_ModalHeader') and contains(text(),'Заказ оформлен')]"]
     
     def __init__(self, driver):
-        self.driver = driver
+        super().__init__(driver)
 
     def wait_for_load_order_page(self):
-        WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located(self.order_form_title))
-
+        self.wait_for_element_is_visible(self.order_form_title)
+    
     def get_order_form_title_text(self):
-        return self.driver.find_element(*self.order_form_title).text
+        return self.get_element_text(self.order_form_title)
     
     def set_first_name(self, first_name):
-        self.driver.find_element(*self.order_form_input_first_name).send_keys(first_name)
+        self.wait_and_fill_element(self.order_form_input_first_name, first_name)
 
     def wait_for_order_form_input_first_name_is_clickable(self):
-        WebDriverWait(self.driver, 30).until(expected_conditions.element_to_be_clickable(self.order_form_input_first_name))
+        self.wait_for_element_is_clickable(self.order_form_input_first_name)
 
     def set_second_name(self, second_name):
-        self.driver.find_element(*self.order_form_input_second_name).send_keys(second_name)
+        self.wait_and_fill_element(self.order_form_input_second_name, second_name)
 
     def set_adress(self, adress):
-        self.driver.find_element(*self.order_form_input_adress).send_keys(adress)
+        self.wait_and_fill_element(self.order_form_input_adress, adress)
     
     def set_metro(self, metro_name):
-        self.driver.find_element(*self.order_form_input_metro).send_keys(metro_name)
+        self.wait_and_fill_element(self.order_form_input_metro, metro_name)
         order_form_input_li_xpath = f".//li[contains(@class,'select-search')]//div[contains(text(),'{metro_name}')]"
         order_form_input_metro_li = [By.XPATH, order_form_input_li_xpath]
-        self.driver.find_element(*order_form_input_metro_li).click()
+        self.wait_and_click_element(order_form_input_metro_li)
 
     def set_phone_number(self, phone_number):
-        self.driver.find_element(*self.order_form_input_phone).send_keys(phone_number)
+        self.wait_and_fill_element(self.order_form_input_phone, phone_number)
 
     def order_next_button_click(self):
-        self.driver.find_element(*self.order_next_button).click()
+        self.wait_and_click_element(self.order_next_button)
 
     def wait_for_load_next_order_page(self):
-        WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located(self.order_form_next_title))
-
+        self.wait_for_element_is_visible(self.order_form_next_title)
+    
     def wait_for_order_form_input_date_is_clickable(self):
-        WebDriverWait(self.driver, 30).until(expected_conditions.element_to_be_clickable(self.order_form_input_date))
+        self.wait_for_element_is_clickable(self.order_form_input_date)
 
     def order_form_input_date_click(self):
-        self.driver.find_element(*self.order_form_input_date).click()
+        self.wait_and_click_element(self.order_form_input_date)
 
     def set_date(self):
         current_date = datetime.now()
@@ -74,37 +73,37 @@ class OrderPage:
         order_form_calendar_day_xpath = f".//div[contains(@class,'react-datepicker__day') and @role='button' and contains(@aria-label,'{date_for_aria_label}')]"
         order_form_calendar_day = [By.XPATH, order_form_calendar_day_xpath]
         self.order_form_input_date_click()
-        self.driver.find_element(*order_form_calendar_day).click()
+        self.wait_and_click_element(order_form_calendar_day)
 
     def wait_for_load_rental_period_dropdown_menu(self):
-        WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located(self.order_form_input_rental_period_dropdown_menu))
+        self.wait_for_element_is_visible(self.order_form_input_rental_period_dropdown_menu)
 
     def set_rental_period(self, period):
-        self.driver.find_element(*self.order_form_input_rental_period).click()
+        self.wait_and_click_element(self.order_form_input_rental_period)
         self.wait_for_load_rental_period_dropdown_menu()
         order_form_rental_period_dropdown_option_xpath = f".//div[contains(@class, 'Dropdown-option') and contains(text(), '{period}')]"
         order_form_rental_period_dropdown_option = [By.XPATH, order_form_rental_period_dropdown_option_xpath]
-        self.driver.find_element(*order_form_rental_period_dropdown_option).click()
+        self.wait_and_click_element(order_form_rental_period_dropdown_option)
 
     def set_color(self, color):
         order_form_checkbox_color_xpath = f".//input[@id='{color}' and @type='checkbox']"
         order_form_checkbox_color = [By.XPATH, order_form_checkbox_color_xpath]
-        self.driver.find_element(*order_form_checkbox_color).click()
+        self.wait_and_click_element(order_form_checkbox_color)
 
     def set_comment(self, comment):
-        self.driver.find_element(*self.order_form_input_comment).send_keys(comment)
+        self.wait_and_fill_element(self.order_form_input_comment, comment)
 
     def order_form_order_button_click(self):
-        self.driver.find_element(*self.order_form_order_button).click()
+        self.wait_and_click_element(self.order_form_order_button)
 
     def wait_order_form_order_confirm_window_title(self):
-        WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located(self.order_form_order_confirm_window_title))
+        self.wait_for_element_is_visible(self.order_form_order_confirm_window_title)
 
     def order_form_confirm_order_button_click(self):
-        self.driver.find_element(*self.order_form_confirm_order_button).click()
+        self.wait_and_click_element(self.order_form_confirm_order_button)
 
     def wait_order_form_order_succeed(self):
-        WebDriverWait(self.driver, 30).until(expected_conditions.visibility_of_element_located(self.order_form_order_succeed))
+        self.wait_for_element_is_visible(self.order_form_order_succeed)
 
     def get_order_form_order_succeed_text(self):
-        return self.driver.find_element(*self.order_form_order_succeed_text).text
+        return self.get_element_text(self.order_form_order_succeed_text)
